@@ -1,0 +1,82 @@
+@use '@angular/material' as mat;
+@use 'sass:map';
+
+// Include the common styles for Angular Material
+@include mat.core();
+
+// Define custom palette
+$azure-primary: (
+  50: #e3f2fd,
+  100: #bbdefb,
+  200: #90caf9,
+  300: #64b5f6,
+  400: #42a5f5,
+  500: #0078d4,
+  600: #0063b1,
+  700: #004e8c,
+  800: #003967,
+  900: #002442,
+  A100: #82b1ff,
+  A200: #448aff,
+  A400: #2979ff,
+  A700: #2962ff,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+// Create the palettes
+$primary: mat.define-palette($azure-primary);
+$accent: mat.define-palette(mat.$cyan-palette);
+$warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0
+));
+
+// Apply the theme
+@include mat.all-component-themes($theme);
+
+// Custom styles for cards
+.mat-mdc-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+// Custom styles for toolbar
+.mat-toolbar.mat-primary {
+  background: linear-gradient(135deg, #0078d4, #0063b1);
+}
+
+// Custom styles for buttons
+.mat-mdc-button {
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: rgba(0, 120, 212, 0.1);
+  }
+} 

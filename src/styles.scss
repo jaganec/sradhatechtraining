@@ -1,1 +1,240 @@
 /* You can add global styles to this file, and also import other style files */
+
+@use '@angular/material' as mat;
+
+// Import Prism CSS for code highlighting
+@import 'prismjs/themes/prism-okaidia.css';
+@import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
+@import 'prismjs/plugins/line-highlight/prism-line-highlight.css';
+
+// Custom Azure Blue colors
+$azure-blue: #0078d4;
+$azure-blue-light: #64b5f6;
+$azure-blue-dark: #004e8c;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f5f5f5;
+}
+
+// Override Material theme colors
+.mat-toolbar.mat-primary {
+  background: linear-gradient(135deg, $azure-blue, $azure-blue-dark);
+}
+
+.mat-mdc-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .mat-mdc-card-title {
+    color: $azure-blue;
+  }
+}
+
+.mat-mdc-button {
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: rgba($azure-blue, 0.1);
+  }
+
+  &.mat-primary {
+    color: $azure-blue;
+  }
+}
+
+// Custom styles for the course cards
+.course-card {
+  background-color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba($azure-blue, 0.2) !important;
+  }
+}
+
+// Custom styles for the code blocks
+.code-block {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  border: 1px solid rgba($azure-blue, 0.1);
+
+  pre {
+    margin: 0;
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+  }
+}
+
+// Navigation styles
+.mat-toolbar {
+  .mat-mdc-button {
+    color: white;
+    
+    &:hover {
+      background-color: rgba(white, 0.1);
+    }
+  }
+}
+
+// Custom styles for the grid tiles
+.mat-grid-tile {
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// Custom styles for icons
+.mat-icon {
+  color: #0078d4;
+}
+
+// Custom styles for buttons
+.mat-mdc-button {
+  &:hover {
+    .mat-icon {
+      transform: scale(1.1);
+    }
+  }
+}
+
+@import '@fontsource/fira-code/400.css';
+@import '@fontsource/fira-code/500.css';
+
+// Code block styling
+pre[class*="language-"] {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: #282c34 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  
+  code {
+    font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #abb2bf !important;
+  }
+}
+
+// Language-specific syntax highlighting
+.token {
+  &.comment,
+  &.prolog,
+  &.doctype,
+  &.cdata {
+    color: #7f848e !important;
+  }
+
+  &.operator,
+  &.punctuation {
+    color: #abb2bf !important;
+  }
+
+  &.function {
+    color: #61afef !important;
+  }
+
+  &.keyword {
+    color: #c678dd !important;
+  }
+
+  &.string {
+    color: #98c379 !important;
+  }
+
+  &.number {
+    color: #d19a66 !important;
+  }
+
+  &.class-name {
+    color: #e5c07b !important;
+  }
+
+  &.annotation {
+    color: #e06c75 !important;
+  }
+}
+
+// Update the code block in slide container
+.slide-container {
+  .code-block {
+    border-radius: 8px;
+    margin: 1rem 0;
+    overflow: hidden;
+    border: 1px solid #3e4451;
+
+    pre {
+      margin: 0;
+      
+      code {
+        color: #282c34 !important;
+        text-shadow: none;
+      }
+    }
+  }
+}
+
+// Inline code styling
+code:not([class*="language-"]) {
+  background-color: #f0f0f0;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+  font-size: 0.9em;
+  color: #e83e8c;
+}
+
+// Markdown styling
+markdown {
+  display: block;
+  margin: 1rem 0;
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  ul, ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+
+    li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+  }
+
+  code:not([class*="language-"]) {
+    background-color: #f0f0f0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', monospace;
+    font-size: 0.9em;
+    color: #e83e8c;
+  }
+}
+

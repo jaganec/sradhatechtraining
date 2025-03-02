@@ -2,8 +2,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join, resolve } from 'path';
-import bootstrap from './main.server';
-import { AppServerModule } from './app/app.server.module';
+import bootstrap from './src/main.server';
 import { renderApplication } from '@angular/platform-server';
 
 // The Express app is exported so that it can be used by serverless Functions.
@@ -11,13 +10,11 @@ export function app(): express.Express {
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
-  const indexHtml = join(serverDistFolder, 'index.server.html');
+  const indexHtml = join(browserDistFolder, 'index.html');
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
   // Serve static files from /browser
   server.get('*.*', express.static(browserDistFolder, {
     maxAge: '1y'
@@ -28,7 +25,7 @@ export function app(): express.Express {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
     renderApplication(bootstrap, {
-      document: indexHtml,
+      document: `<!DOCTYPE html><html><head><title>ST Training</title></head><body><app-root></app-root></body></html>`,
       url: `${protocol}://${headers.host}${originalUrl}`,
       platformProviders: [
         { provide: APP_BASE_HREF, useValue: baseUrl }
@@ -54,4 +51,4 @@ function run(): void {
   });
 }
 
-run();
+run(); 
