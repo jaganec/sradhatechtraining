@@ -358,6 +358,206 @@ const WindowSize = () => {
     },
     {
       id: 6,
+      topic: 'UI Components',
+      description: 'Building reusable UI components',
+      content: [`# UI Components
+
+## Key Components
+* Loading Spinner
+* Pagination
+* Error Boundary
+* Modal
+* Form Controls`],
+      code: `// src/components/ui/LoadingSpinner.js
+import PropTypes from 'prop-types';
+
+export const LoadingSpinner = ({ size = 'md' }) => {
+  const sizeClasses = {
+    sm: 'w-4 h-4',
+    md: 'w-8 h-8',
+    lg: 'w-12 h-12'
+  };
+
+  return (
+    <div className="flex justify-center items-center">
+      <div 
+        className={\`animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 \${sizeClasses[size]}\`}
+      />
+    </div>
+  );
+};
+
+LoadingSpinner.propTypes = {
+  size: PropTypes.oneOf(['sm', 'md', 'lg'])
+};
+
+// src/components/ui/Pagination.js
+export const Pagination = ({ 
+  currentPage, 
+  totalPages, 
+  onPageChange 
+}) => {
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  return (
+    <div className="flex justify-center gap-2 mt-4">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-3 py-1 rounded border disabled:opacity-50"
+      >
+        Previous
+      </button>
+      
+      {pages.map(page => (
+        <button
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={\`px-3 py-1 rounded border \${
+            currentPage === page ? 'bg-blue-600 text-white' : ''
+          }\`}
+        >
+          {page}
+        </button>
+      ))}
+      
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-3 py-1 rounded border disabled:opacity-50"
+      >
+        Next
+      </button>
+    </div>
+  );
+};
+
+Pagination.propTypes = {
+  currentPage: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired
+};
+
+// Export all UI components
+export * from './LoadingSpinner';
+export * from './Pagination';`,
+      language: 'jsx'
+    },
+    {
+      id: 7,
+      topic: 'Custom Hooks',
+      description: 'Creating custom hooks for product management',
+      content: [`# Custom Hooks
+
+## Key Concepts
+* Data fetching
+* State management
+* Side effects
+* Error handling
+* Loading states`],
+      code: `// src/hooks/useProduct.js
+import { useQuery } from '@tanstack/react-query';
+import { ProductService } from '../services/product';
+
+export const useProduct = (productId) => {
+  const { 
+    data: product,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['product', productId],
+    queryFn: () => ProductService.getProduct(productId),
+    enabled: !!productId
+  });
+
+  return {
+    product,
+    isLoading,
+    error
+  };
+};
+
+// src/hooks/useProducts.js
+export const useProducts = (filters) => {
+  const {
+    data,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['products', filters],
+    queryFn: () => ProductService.getProducts(filters)
+  });
+
+  return {
+    products: data?.items ?? [],
+    pagination: data?.pagination,
+    isLoading,
+    error
+  };
+};`,
+      language: 'jsx'
+    },
+    {
+      id: 8,
+      topic: 'API Services',
+      description: 'Implementing API services for product management',
+      content: [`# API Services
+
+## Key Features
+* API client setup
+* Error handling
+* Response transformation
+* Request/Response types
+* Cache management`],
+      code: `// src/services/api.js
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+api.interceptors.response.use(
+  response => response.data,
+  error => {
+    const message = error.response?.data?.message || error.message;
+    throw new Error(message);
+  }
+);
+
+export default api;
+
+// src/services/product.js
+import api from './api';
+
+export const ProductService = {
+  async getProducts(filters = {}) {
+    const params = new URLSearchParams(filters);
+    return api.get(\`/products?\${params}\`);
+  },
+
+  async getProduct(id) {
+    return api.get(\`/products/\${id}\`);
+  },
+
+  async createProduct(product) {
+    return api.post('/products', product);
+  },
+
+  async updateProduct(id, updates) {
+    return api.patch(\`/products/\${id}\`, updates);
+  },
+
+  async deleteProduct(id) {
+    return api.delete(\`/products/\${id}\`);
+  }
+};`,
+      language: 'jsx'
+    },
+    {
+      id: 9,
       topic: 'Suspense and Error Boundaries',
       description: 'Advanced React patterns for loading and error handling',
       content: [`# Suspense and Error Boundaries
@@ -455,7 +655,7 @@ const ProductDetails = () => {
       language: 'jsx'
     },
     {
-      id: 7,
+      id: 10,
       topic: 'Performance Optimization',
       description: 'Optimizing React application performance',
       content: [`# Performance Optimization
@@ -562,7 +762,7 @@ const withPerformanceTracking = (WrappedComponent, metricName) => {
       language: 'jsx'
     },
     {
-      id: 8,
+      id: 11,
       topic: 'Modern Data Fetching with React Query',
       description: 'Using React Query for efficient data management',
       content: [`# React Query
@@ -637,150 +837,165 @@ const ProductList = () => {
       language: 'jsx'
     },
     {
-      id: 9,
-      topic: 'State Management with Context',
-      description: 'Implementing shopping cart using Context API',
-      content: [`# Context API for State Management
+      id: 12,
+      topic: 'State Management with Redux Toolkit',
+      description: 'Implementing cart functionality with Redux Toolkit',
+      content: [`# Redux Toolkit Implementation
 
-## Benefits
-* Built into React
-* Simpler than Redux for many cases
-* Easier to understand
-* Perfect for medium-sized apps
-* Reduces prop drilling`],
-      code: `// src/context/CartContext.js
-import { createContext, useContext, useReducer } from 'react';
+## Key Concepts
+* Redux Toolkit setup
+* Slices and reducers
+* Actions and thunks
+* Selectors
+* Store configuration`],
+      code: `// src/features/cart/cartSlice.js
+import { createSlice } from '@reduxjs/toolkit';
 import PropTypes from 'prop-types';
 
-const CartContext = createContext(null);
+const initialState = {
+  items: [],
+  total: 0,
+  isLoading: false,
+  error: null
+};
 
-const cartReducer = (state, action) => {
-  switch (action.type) {
-    case 'ADD_TO_CART':
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState,
+  reducers: {
+    addToCart: (state, action) => {
       const existingItem = state.items.find(
         item => item.id === action.payload.id
       );
       
-      return {
-        ...state,
-        items: existingItem
-          ? state.items.map(item =>
-              item.id === action.payload.id
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
-            )
-          : [...state.items, { ...action.payload, quantity: 1 }],
-      };
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        state.items.push({ ...action.payload, quantity: 1 });
+      }
+      
+      state.total = state.items.reduce(
+        (sum, item) => sum + (item.price * item.quantity), 
+        0
+      );
+    },
+    
+    removeFromCart: (state, action) => {
+      state.items = state.items.filter(item => item.id !== action.payload);
+      state.total = state.items.reduce(
+        (sum, item) => sum + (item.price * item.quantity), 
+        0
+      );
+    },
+    
+    updateQuantity: (state, action) => {
+      const { id, quantity } = action.payload;
+      const item = state.items.find(item => item.id === id);
+      
+      if (item) {
+        item.quantity = Math.max(0, quantity);
+        if (item.quantity === 0) {
+          state.items = state.items.filter(i => i.id !== item.id);
+        }
+      }
+      
+      state.total = state.items.reduce(
+        (sum, item) => sum + (item.price * item.quantity), 
+        0
+      );
+    },
+    
+    clearCart: (state) => {
+      state.items = [];
+      state.total = 0;
+    }
+  }
+});
 
-    case 'REMOVE_FROM_CART':
-      return {
-        ...state,
-        items: state.items.filter(item => item.id !== action.payload),
-      };
+// Action creators
+export const { 
+  addToCart, 
+  removeFromCart, 
+  updateQuantity, 
+  clearCart 
+} = cartSlice.actions;
 
-    case 'UPDATE_QUANTITY':
-      return {
-        ...state,
-        items: state.items.map(item =>
-          item.id === action.payload.id
-            ? { ...item, quantity: action.payload.quantity }
-            : item
-        ),
-      };
+// Selectors
+export const selectCartItems = (state) => state.cart.items;
+export const selectCartTotal = (state) => state.cart.total;
+export const selectCartItemCount = (state) => 
+  state.cart.items.reduce((sum, item) => sum + item.quantity, 0);
 
-    default:
-      return state;
+// Thunks
+export const addToCartAsync = (product) => async (dispatch) => {
+  try {
+    // You could add API calls here, e.g., check stock availability
+    await checkProductAvailability(product.id);
+    dispatch(addToCart(product));
+  } catch (error) {
+    console.error('Failed to add to cart:', error);
   }
 };
 
-export const CartProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, { items: [] });
+export default cartSlice.reducer;
 
-  const addToCart = (product) => {
-    dispatch({ type: 'ADD_TO_CART', payload: product });
+// PropTypes definitions
+export const CartItemShape = PropTypes.shape({
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired,
+  quantity: PropTypes.number.isRequired
+});
+
+// Usage in component
+const CartComponent = () => {
+  const dispatch = useDispatch();
+  const cartItems = useSelector(selectCartItems);
+  const total = useSelector(selectCartTotal);
+  
+  const handleUpdateQuantity = (id, quantity) => {
+    dispatch(updateQuantity({ id, quantity }));
   };
-
-  const removeFromCart = (productId) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
+  
+  const handleRemoveItem = (id) => {
+    dispatch(removeFromCart(id));
   };
-
-  const updateQuantity = (productId, quantity) => {
-    dispatch({
-      type: 'UPDATE_QUANTITY',
-      payload: { id: productId, quantity },
-    });
-  };
-
-  const cartTotal = state.items.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-
-  return (
-    <CartContext.Provider
-      value={{
-        items: state.items,
-        total: cartTotal,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
-  );
-};
-
-CartProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-// Custom hook for using cart
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return context;
-};
-
-// Usage in components
-const AddToCartButton = ({ product }) => {
-  const { addToCart } = useCart();
-  return (
-    <button onClick={() => addToCart(product)}>
-      Add to Cart
-    </button>
-  );
-};
-
-const CartSummary = () => {
-  const { items, total, removeFromCart, updateQuantity } = useCart();
   
   return (
-    <div>
-      {items.map(item => (
-        <div key={item.id}>
+    <div className="cart">
+      {cartItems.map(item => (
+        <div key={item.id} className="cart-item">
           <span>{item.name}</span>
           <input
             type="number"
+            min="0"
             value={item.quantity}
-            onChange={(e) => updateQuantity(item.id, +e.target.value)}
-            min="1"
+            onChange={(e) => handleUpdateQuantity(
+              item.id, 
+              parseInt(e.target.value, 10)
+            )}
           />
-          <button onClick={() => removeFromCart(item.id)}>
+          <span>\${item.price * item.quantity}</span>
+          <button onClick={() => handleRemoveItem(item.id)}>
             Remove
           </button>
         </div>
       ))}
-      <div>Total: \${total.toFixed(2)}</div>
+      <div className="cart-total">
+        Total: \${total}
+      </div>
     </div>
   );
+};
+
+CartComponent.propTypes = {
+  cartItems: PropTypes.arrayOf(CartItemShape),
+  total: PropTypes.number
 };`,
       language: 'jsx'
     },
     {
-      id: 10,
+      id: 13,
       topic: 'Project Structure & Routing',
       description: 'Setting up e-commerce project structure and routing',
       content: [`# E-commerce Project Setup
@@ -836,7 +1051,7 @@ Layout.propTypes = {
       language: 'jsx'
     },
     {
-      id: 11,
+      id: 14,
       topic: 'Product List Implementation',
       description: 'Building the product listing with filters',
       content: [`# Product List Feature
@@ -947,7 +1162,7 @@ ProductCard.propTypes = {
       language: 'jsx'
     },
     {
-      id: 12,
+      id: 15,
       topic: 'Shopping Cart Component',
       description: 'Implementing the shopping cart functionality',
       content: [`# Shopping Cart Implementation
@@ -1030,7 +1245,7 @@ export default Cart;`,
       language: 'jsx'
     },
     {
-      id: 13,
+      id: 16,
       topic: 'Authentication Setup',
       description: 'Implementing user authentication',
       content: [`# User Authentication
@@ -1161,7 +1376,7 @@ export default LoginForm;`,
       language: 'jsx'
     },
     {
-      id: 14,
+      id: 17,
       topic: 'Product Details with Routing',
       description: 'Implementing product details page and routing',
       content: [`# Product Details & Routing
@@ -1253,7 +1468,7 @@ const App = () => {
       language: 'jsx'
     },
     {
-      id: 15,
+      id: 18,
       topic: 'Testing Setup and First Tests',
       description: 'Setting up testing environment and writing tests',
       content: [`# Testing React Applications
@@ -1354,7 +1569,7 @@ describe('cartSlice', () => {
       language: 'jsx'
     },
     {
-      id: 16,
+      id: 19,
       topic: 'Checkout Process',
       description: 'Implementing checkout with form validation',
       content: [`# Checkout Process Implementation
@@ -1489,7 +1704,7 @@ const CheckoutForm = () => {
       language: 'jsx'
     },
     {
-      id: 17,
+      id: 20,
       topic: 'Order Management & API Integration',
       description: 'Implementing order management with custom hooks',
       content: [`# Order Management & API Integration
@@ -1625,7 +1840,7 @@ const OrderList = () => {
       language: 'jsx'
     },
     {
-      id: 18,
+      id: 21,
       topic: 'Error Boundaries & Performance',
       description: 'Implementing error boundaries and optimizing performance',
       content: [`# Error Handling & Performance
@@ -1723,7 +1938,7 @@ const App = () => {
       language: 'jsx'
     },
     {
-      id: 19,
+      id: 22,
       topic: 'ESLint & Prettier Setup',
       description: 'Configuring ESLint and Prettier for code quality',
       content: [`# Code Quality Tools
@@ -1800,7 +2015,7 @@ npm run format`,
       language: 'javascript'
     },
     {
-      id: 20,
+      id: 23,
       topic: 'E2E Testing with Cypress',
       description: 'Setting up and writing E2E tests with Cypress',
       content: [`# E2E Testing

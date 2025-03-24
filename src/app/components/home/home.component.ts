@@ -155,6 +155,12 @@ export class HomeComponent {
       name: 'SQL',
       icon: 'storage',
       description: 'Master database programming with SQL'
+    },
+    {
+      id: 'accessibility',
+      name: 'Web Accessibility (A11y)',
+      icon: 'accessibility_new',
+      description: 'Learn web accessibility standards and implementation'
     }
   ];
 } 
