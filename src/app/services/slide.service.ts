@@ -6,6 +6,7 @@ import { reactSlides } from '../data/react-slides.data';
 import { typescriptSlides } from '../data/typescript-slides.data';
 import { javaSlides } from '../data/java-slides.data'
 import { accessibilitySlides } from '../data/accessibility-slides.data';
+import { nodejsSlides } from '../data/nodejs-slides.data';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,8 @@ export class SlideService {
         return of(javaSlides.slides);
       case 'accessibility':
         return of(accessibilitySlides.slides);
+      case 'nodejs':
+        return of(nodejsSlides.slides);
       default:
         return of([]);
     }
