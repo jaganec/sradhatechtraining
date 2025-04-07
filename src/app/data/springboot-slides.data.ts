@@ -1618,6 +1618,635 @@ public class ProductService {
     }
 }`,
       language: 'java'
+    },
+        {
+      id: 25,
+      topic: 'Introduction to Spring Core',
+      description: 'Understanding fundamental Spring concepts and principles',
+      content: [
+        "Spring Core Concepts:",
+        "• Inversion of Control (IoC)",
+        "• Dependency Injection (DI)",
+        "• ApplicationContext",
+        "• Bean Lifecycle",
+        "• AOP (Aspect-Oriented Programming)",
+        "",
+        "Key Components:",
+        "• Beans and Bean Factory",
+        "• Component Scanning",
+        "• Scopes (Singleton, Prototype)",
+        "• Bean Lifecycle Callbacks"
+      ],
+      code: `// Basic Spring Bean
+@Component
+public class UserService {
+    private final UserRepository userRepository;
+
+    // Constructor Injection
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // Bean Lifecycle Methods
+    @PostConstruct
+    public void init() {
+        System.out.println("Bean initialized");
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        System.out.println("Bean being destroyed");
+    }
+}
+
+// AOP Example
+@Aspect
+@Component
+public class LoggingAspect {
+    @Before("execution(* com.example.service.*.*(..))")
+    public void logBefore(JoinPoint joinPoint) {
+        System.out.println("Before " + joinPoint.getSignature().getName());
+    }
+}`,
+      language: 'java'
+    },
+    {
+      id: 26,
+      topic: 'Spring Boot Fundamentals',
+      description: 'Core concepts and features of Spring Boot',
+      content: [
+        "Spring Boot Features:",
+        "• Auto-configuration",
+        "• Standalone Applications",
+        "• Embedded Servers",
+        "• Starter Dependencies",
+        "",
+        "Key Annotations:",
+        "• @SpringBootApplication",
+        "• @Component, @Service, @Repository",
+        "• @RestController, @Controller",
+        "• @Configuration",
+        "• @Value, @ConfigurationProperties"
+      ],
+      code: `@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+
+@RestController
+@RequestMapping("/api")
+public class UserController {
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userService.getAllUsers();
+    }
+}
+
+@ConfigurationProperties(prefix = "app")
+@Configuration
+public class AppProperties {
+    private String apiKey;
+    private int maxConnections;
+    private List<String> allowedOrigins;
+
+    // Getters and setters
+}`,
+      language: 'java'
+    },
+    {
+      id: 27,
+      topic: 'Spring Boot Configuration',
+      description: 'Understanding configuration options and profiles',
+      content: [
+        "Configuration Types:",
+        "• application.properties/yml",
+        "• Environment Variables",
+        "• Command Line Arguments",
+        "• Profile-based Configuration",
+        "",
+        "Key Concepts:",
+        "• External Configuration",
+        "• Profile Management",
+        "• Configuration Properties",
+        "• Relaxed Binding",
+        "• Property Sources"
+      ],
+      code: `# application.yml
+spring:
+  profiles:
+    active: dev
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydb
+    username: \${DB_USERNAME}
+    password: \${DB_PASSWORD}
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+# Custom properties
+app:
+  security:
+    jwt-secret: \${JWT_SECRET}
+    token-expiration: 86400000
+  
+  feature-flags:
+    new-ui: true
+    beta-features: false
+
+---
+# Development profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  h2:
+    console:
+      enabled: true
+  
+  datasource:
+    url: jdbc:h2:mem:testdb
+
+---
+# Production profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  
+  jpa:
+    show-sql: false`,
+      language: 'yaml'
+    },
+    {
+      id: 28,
+      topic: 'Building RESTful APIs',
+      description: 'Creating REST endpoints and handling HTTP requests',
+      content: [
+        "REST Concepts:",
+        "• HTTP Methods (GET, POST, PUT, DELETE)",
+        "• Request Mapping",
+        "• Path Variables",
+        "• Request Parameters",
+        "• Request/Response Bodies",
+        "",
+        "Implementation:",
+        "• @RestController",
+        "• @RequestMapping",
+        "• @PathVariable, @RequestParam",
+        "• @RequestBody",
+        "• ResponseEntity"
+      ],
+      code: `@RestController
+@RequestMapping("/api/v1/users")
+public class UserController {
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> getUsers(
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getUsers(name, page, size));
+    }
+
+    @PostMapping
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) {
+        User user = userService.createUser(userDTO);
+        URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(user.getId())
+            .toUri();
+        return ResponseEntity.created(location).body(user);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.updateUser(id, userDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+}`,
+      language: 'java'
+    },
+    {
+      id: 29,
+      topic: 'Database Integration with Spring Data JPA',
+      description: 'Working with databases using JPA and Hibernate',
+      content: [
+        "JPA Concepts:",
+        "• Entity Mapping",
+        "• Relationships (One-to-One, One-to-Many, Many-to-Many)",
+        "• JpaRepository",
+        "• JPQL and Native Queries",
+        "",
+        "Features:",
+        "• Automatic Query Methods",
+        "• Custom Queries",
+        "• Pagination and Sorting",
+        "• Transaction Management",
+        "• Auditing"
+      ],
+      code: `@Entity
+@Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Email
+    @Column(unique = true)
+    private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+    
+    @Query("SELECT u FROM User u WHERE u.name LIKE %:name%")
+    List<User> searchByName(@Param("name") String name);
+    
+    @Query(value = """
+        SELECT u.* FROM users u
+        JOIN user_roles ur ON u.id = ur.user_id
+        JOIN roles r ON ur.role_id = r.id
+        WHERE r.name = :roleName
+        """, nativeQuery = true)
+    List<User> findByRole(@Param("roleName") String roleName);
+}`,
+      language: 'java'
+    },
+    {
+      id: 30,
+      topic: 'Spring Security Implementation',
+      description: 'Implementing authentication and authorization',
+      content: [
+        "Security Concepts:",
+        "• Authentication",
+        "• Authorization",
+        "• JWT Implementation",
+        "• Method Security",
+        "",
+        "Features:",
+        "• User Details Service",
+        "• Password Encoding",
+        "• Role-based Access Control",
+        "• Security Filters",
+        "• CORS Configuration"
+      ],
+      code: `@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> 
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthFilter, 
+                UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Service
+    public class JwtService {
+        @Value("\${app.security.jwt-secret}")
+        private String secretKey;
+
+        public String generateToken(UserDetails userDetails) {
+            return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+        }
+    }
+}`,
+      language: 'java'
+    },
+    {
+      id: 31,
+      topic: 'Testing in Spring Boot',
+      description: 'Unit and integration testing strategies',
+      content: [
+        "Testing Types:",
+        "• Unit Testing",
+        "• Integration Testing",
+        "• Mock MVC Testing",
+        "• Service Testing",
+        "",
+        "Tools & Frameworks:",
+        "• JUnit 5",
+        "• Mockito",
+        "• @SpringBootTest",
+        "• TestRestTemplate",
+        "• AssertJ"
+      ],
+      code: `@SpringBootTest
+class UserServiceIntegrationTest {
+    @Autowired
+    private UserService userService;
+    
+    @MockBean
+    private UserRepository userRepository;
+    
+    @Test
+    void whenCreateUser_thenUserIsSaved() {
+        // Arrange
+        UserDTO userDTO = new UserDTO("John", "john@example.com");
+        User user = new User();
+        user.setName(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+        
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        
+        // Act
+        User savedUser = userService.createUser(userDTO);
+        
+        // Assert
+        assertThat(savedUser.getName()).isEqualTo(userDTO.getName());
+        verify(userRepository).save(any(User.class));
+    }
+}
+
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @MockBean
+    private UserService userService;
+    
+    @Test
+    void whenGetUser_thenReturnUser() throws Exception {
+        User user = new User();
+        user.setId(1L);
+        user.setName("John");
+        
+        when(userService.getUser(1L)).thenReturn(Optional.of(user));
+        
+        mockMvc.perform(get("/api/v1/users/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("John"));
+    }
+}`,
+      language: 'java'
+    },
+    {
+      id: 32,
+      topic: 'Building and Deployment',
+      description: 'Building, packaging, and deploying Spring Boot applications',
+      content: [
+        "Build Tools:",
+        "• Maven Configuration",
+        "• Gradle Setup",
+        "• Dependencies Management",
+        "• Resource Filtering",
+        "",
+        "Deployment:",
+        "• JAR Packaging",
+        "• Docker Containerization",
+        "• Environment Configuration",
+        "• CI/CD Pipeline Setup",
+        "• Cloud Deployment"
+      ],
+      code: `# Maven configuration
+<project>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.0</version>
+    </parent>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+# Dockerfile
+FROM eclipse-temurin:17-jdk-alpine
+VOLUME /tmp
+ARG JAR_FILE=target/*.jar
+COPY \${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+
+# Docker Compose
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mydb
+    depends_on:
+      - db
+  
+  db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password`,
+      language: 'yaml'
+    },
+    {
+      id: 33,
+      topic: 'Additional Tools and Features',
+      description: 'Essential tools and features for Spring Boot development',
+      content: [
+        "Development Tools:",
+        "• Spring Boot DevTools",
+        "• Lombok",
+        "• Actuator",
+        "• Swagger/OpenAPI",
+        "",
+        "Advanced Features:",
+        "• Custom Actuator Endpoints",
+        "• API Documentation",
+        "• Monitoring and Metrics",
+        "• Caching",
+        "• Async Processing"
+      ],
+      code: `// Swagger/OpenAPI Configuration
+@Configuration
+public class OpenApiConfig {
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("Application API")
+                .version("1.0")
+                .description("API Documentation"));
+    }
+}
+
+// Actuator Custom Endpoint
+@Component
+@Endpoint(id = "features")
+public class FeaturesEndpoint {
+    private Map<String, Boolean> features = new HashMap<>();
+    
+    @ReadOperation
+    public Map<String, Boolean> features() {
+        return features;
+    }
+    
+    @WriteOperation
+    public void configureFeature(@Selector String name, boolean enabled) {
+        features.put(name, enabled);
+    }
+}
+
+// Async Service Method
+@Service
+public class AsyncService {
+    @Async
+    public CompletableFuture<User> fetchUserAsync(Long id) {
+        return CompletableFuture.supplyAsync(() -> {
+            // Simulate long running task
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        });
+    }
+}`,
+      language: 'java'
+    },
+    {
+      id: 34,
+      topic: 'Introduction to Spring Cloud',
+      description: 'Overview of Spring Cloud and microservices',
+      content: [
+        "Spring Cloud Components:",
+        "• Service Discovery (Eureka)",
+        "• API Gateway",
+        "• Config Server",
+        "• Circuit Breaker",
+        "",
+        "Microservices Concepts:",
+        "• Service Communication",
+        "• Load Balancing",
+        "• Distributed Configuration",
+        "• Resilience Patterns",
+        "• Monitoring"
+      ],
+      code: `@SpringBootApplication
+@EnableDiscoveryClient
+public class ServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceApplication.class, args);
+    }
+}
+
+// API Gateway Configuration
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userService
+                fallbackUri: forward:/fallback
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+
+// Circuit Breaker
+@CircuitBreaker(name = "userService", fallbackMethod = "getUserFallback")
+public User getUser(Long id) {
+        return restTemplate.getForObject(
+        "http://user-service/api/users/" + id,
+        User.class
+        );
+    }
+    
+public User getUserFallback(Long id, Exception ex) {
+    return new User(); // Return default user
+}`,
+      language: 'java'
     }
   ]
 }; 
